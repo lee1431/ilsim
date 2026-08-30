@@ -23,8 +23,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Apply UI readability stylesheet
-        run: sed -i 's#</head>#<link rel="stylesheet" href="./ui-font-fix.css">\n</head>#' index.html
+      - name: Apply rack map and shared logistics UI
+        run: node inject-rack.js
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload static site
