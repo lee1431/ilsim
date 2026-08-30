@@ -1,46 +1,19 @@
 const RackViewer=(()=>{
   const FLOORS=['1F','2F'], ROWS=50, COLS=50, LEVELS=4;
   const elevators=[{id:'E01',count:3},{id:'E02',count:8},{id:'E03',count:5},{id:'E04',count:0}];
-  let host=null,state={floor:'1F',row:3,col:12,open:false};
+  let host=null,state={floor:'1F',row:3,col:12,open:false},seeded=false;
   const inventory=new Map();
   function key(f,r,c,l){return `${f}-A${String(r).padStart(2,'0')}-${String(c).padStart(2,'0')}-L${l}`}
   function faceInfo(r){return r%2===0?{aisle:r/2,arrow:'↑'}:{aisle:(r+1)/2,arrow:'↓'}}
-  function seed(){if(inventory.size)return;const codes=['AX-2143','AX-2148','AX-2183','BX-2208','CX-2126','DX-2237'];for(const f of FLOORS){for(let r=1;r<=ROWS;r++){for(let c=1;c<=COLS;c++){const h=(r*17+c*31+(f==='2F'?13:0))%10;const levels=h<2?0:h<5?1:h<8?2:h===8?3:4;for(let l=1;l<=levels;l++){const code=codes[(r+c+l)%codes.length];inventory.set(key(f,r,c,l),{code,lot:`L26${String((r%12)+1).padStart(2,'0')}${String((c%28)+1).padStart(2,'0')}-${String.fromCharCode(65+(l%4))}`});}}}}}
+  function seed(){if(seeded)return;seeded=true;const codes=['AX-2143','AX-2148','AX-2183','BX-2208','CX-2126','DX-2237'];for(const f of FLOORS){for(let r=1;r<=ROWS;r++){for(let c=1;c<=COLS;c++){const h=(r*17+c*31+(f==='2F'?13:0))%10;const levels=h<2?0:h<5?1:h<8?2:h===8?3:4;for(let l=1;l<=levels;l++){const k=key(f,r,c,l);if(inventory.has(k))continue;const code=codes[(r+c+l)%codes.length];inventory.set(k,{code,lot:`L26${String((r%12)+1).padStart(2,'0')}${String((c%28)+1).padStart(2,'0')}-${String.fromCharCode(65+(l%4))}`});}}}}}
   function occupied(f,r,c){let n=0;for(let l=1;l<=LEVELS;l++)if(inventory.has(key(f,r,c,l)))n++;return n}
   function stats(f){let n=0;for(let r=1;r<=ROWS;r++)for(let c=1;c<=COLS;c++)n+=occupied(f,r,c);return {used:n,free:10000-n,rate:Math.round(n/100)} }
-  function render(){
-    if(!host)return;
-    const st=stats(state.floor),cells=[];
-    cells.push('<div class="corner"></div>');
-    for(let c=1;c<=COLS;c++)cells.push(`<div class="colHead">${String(c).padStart(2,'0')}</div>`);
-
-    for(let r=1;r<=ROWS;r++){
-      const face=faceInfo(r);
-      cells.push(`<div class="rowHead" title="A${String(r).padStart(2,'0')} · 통로 ${String(face.aisle).padStart(2,'0')} 방향"><span>A${String(r).padStart(2,'0')}</span><small>${face.arrow}${String(face.aisle).padStart(2,'0')}</small></div>`);
-      for(let c=1;c<=COLS;c++){
-        const o=occupied(state.floor,r,c);
-        cells.push(`<button class="rackCell o${o} ${r===state.row&&c===state.col?'sel':''}" data-r="${r}" data-c="${c}" title="${state.floor}-A${String(r).padStart(2,'0')}-${String(c).padStart(2,'0')}">${o||'·'}</button>`);
-      }
-      // Physical layout: A01 / aisle01 / A02+A03 back-to-back / aisle02 / A04+A05 ...
-      // Therefore a forklift aisle exists after every odd-numbered rack row.
-      if(r%2===1){
-        const aisle=(r+1)/2;
-        cells.push(`<div class="rackAisle"><strong>통로 ${String(aisle).padStart(2,'0')}</strong><span>지게차 주행 · 회전 · 파렛트 입출고 작업 공간</span><b>← FORKLIFT AISLE →</b></div>`);
-      }
-    }
-
-    const selectedFace=faceInfo(state.row),detail=[];
-    for(let l=LEVELS;l>=1;l--){
-      const k=key(state.floor,state.row,state.col,l),it=inventory.get(k);
-      detail.push(`<div class="levelCard ${it?'':'empty'}"><div class="levelTop"><b>L${l}</b><span>${it?'재고 있음':'EMPTY'}</span></div><strong>${it?it.code:'빈 슬롯'}</strong>${it?`<p>${it.lot}<br>${k}</p>`:`<p>${k}</p>`}</div>`)
-    }
-
-    host.innerHTML=`<div class="rackOverlay"><section class="rackPanel"><div class="rackHeader"><div class="rackTitle"><div><strong>랙 보기</strong><small>WAREHOUSE MAP · 총 20,000 PALLET SLOT · 4단 랙 · 지게차 통로 25개</small></div></div><button class="rackClose" id="rackClose">✕ 닫기</button></div><div class="rackToolbar"><div class="rackFloorTabs">${FLOORS.map(f=>`<button data-floor="${f}" class="${state.floor===f?'on':''}">${f==='1F'?'1층':'2층'}</button>`).join('')}</div><div class="rackZoneTabs"><button class="on">A ZONE</button></div><div class="rackSearch"><input id="rackSearch" placeholder="예: A03-12 또는 2F-A03-12-L2"><button id="rackGo">찾기</button></div><div class="rackCapacity">${state.floor} · 사용 ${st.used.toLocaleString()} / 10,000 · ${st.rate}%</div></div><div class="rackBody"><div class="rackMain"><div class="rackElevators">${elevators.map(e=>`<div class="elevatorCard ${e.count>=8?'full':''}"><strong>${e.id}</strong><span>${e.count>=8?'FULL · 2층 반출 지연':'대기 컨베이어'}</span><b>${e.count}/8</b></div>`).join('')}</div><div class="rackLegend"><div><span><i class="lg0"></i>0단</span><span><i class="lg1"></i>1단</span><span><i class="lg2"></i>2단</span><span><i class="lg3"></i>3단</span><span><i class="lg4"></i>4단 FULL</span></div><b>↑/↓ 숫자 = 랙이 바라보는 지게차 통로</b></div><div class="rackMapScroll"><div class="rackMap">${cells.join('')}</div></div></div><aside class="rackDetail"><small>SELECTED BAY</small><h2>${state.floor}-A${String(state.row).padStart(2,'0')}-${String(state.col).padStart(2,'0')}</h2><div class="bayMeta">4 PALLET SLOT · 4 LEVEL RACK · ${selectedFace.arrow} 통로 ${String(selectedFace.aisle).padStart(2,'0')} 방향</div><div class="levelStack">${detail.join('')}</div><div class="rackStats"><div><small>층 사용량</small><b>${st.used.toLocaleString()}</b></div><div><small>빈 슬롯</small><b>${st.free.toLocaleString()}</b></div></div><div class="rackHint">배열은 실제 지게차 통로를 기준으로 분리되어 있습니다. A02/A03처럼 통로 사이의 두 렉은 등을 맞대고 서로 반대 통로를 바라봅니다.</div></aside></div></section></div>`;
-    bind();
-  }
+  function render(){if(!host)return;const st=stats(state.floor),cells=[];cells.push('<div class="corner"></div>');for(let c=1;c<=COLS;c++)cells.push(`<div class="colHead">${String(c).padStart(2,'0')}</div>`);for(let r=1;r<=ROWS;r++){const face=faceInfo(r);cells.push(`<div class="rowHead" title="A${String(r).padStart(2,'0')} · 통로 ${String(face.aisle).padStart(2,'0')} 방향"><span>A${String(r).padStart(2,'0')}</span><small>${face.arrow}${String(face.aisle).padStart(2,'0')}</small></div>`);for(let c=1;c<=COLS;c++){const o=occupied(state.floor,r,c);cells.push(`<button class="rackCell o${o} ${r===state.row&&c===state.col?'sel':''}" data-r="${r}" data-c="${c}" title="${state.floor}-A${String(r).padStart(2,'0')}-${String(c).padStart(2,'0')}">${o||'·'}</button>`);}if(r%2===1){const aisle=(r+1)/2;cells.push(`<div class="rackAisle"><strong>통로 ${String(aisle).padStart(2,'0')}</strong><span>지게차 주행 · 회전 · 파렛트 입출고 작업 공간</span><b>← FORKLIFT AISLE →</b></div>`);}}
+    const selectedFace=faceInfo(state.row),detail=[];for(let l=LEVELS;l>=1;l--){const k=key(state.floor,state.row,state.col,l),it=inventory.get(k);detail.push(`<div class="levelCard ${it?'':'empty'}"><div class="levelTop"><b>L${l}</b><span>${it?'재고 있음':'EMPTY'}</span></div><strong>${it?it.code:'빈 슬롯'}</strong>${it?`<p>${it.lot}<br>${k}</p>`:`<p>${k}</p>`}</div>`)}
+    host.innerHTML=`<div class="rackOverlay"><section class="rackPanel"><div class="rackHeader"><div class="rackTitle"><div><strong>랙 보기</strong><small>WAREHOUSE MAP · 총 20,000 PALLET SLOT · 4단 랙 · 지게차 통로 25개</small></div></div><button class="rackClose" id="rackClose">✕ 닫기</button></div><div class="rackToolbar"><div class="rackFloorTabs">${FLOORS.map(f=>`<button data-floor="${f}" class="${state.floor===f?'on':''}">${f==='1F'?'1층':'2층'}</button>`).join('')}</div><div class="rackZoneTabs"><button class="on">A ZONE</button></div><div class="rackSearch"><input id="rackSearch" placeholder="예: A03-12 또는 2F-A03-12-L2"><button id="rackGo">찾기</button></div><div class="rackCapacity">${state.floor} · 사용 ${st.used.toLocaleString()} / 10,000 · ${st.rate}%</div></div><div class="rackBody"><div class="rackMain"><div class="rackElevators">${elevators.map(e=>`<div class="elevatorCard ${e.count>=8?'full':''}"><strong>${e.id}</strong><span>${e.count>=8?'FULL · 2층 반출 지연':'대기 컨베이어'}</span><b>${e.count}/8</b></div>`).join('')}</div><div class="rackLegend"><div><span><i class="lg0"></i>0단</span><span><i class="lg1"></i>1단</span><span><i class="lg2"></i>2단</span><span><i class="lg3"></i>3단</span><span><i class="lg4"></i>4단 FULL</span></div><b>↑/↓ 숫자 = 랙이 바라보는 지게차 통로</b></div><div class="rackMapScroll"><div class="rackMap">${cells.join('')}</div></div></div><aside class="rackDetail"><small>SELECTED BAY</small><h2>${state.floor}-A${String(state.row).padStart(2,'0')}-${String(state.col).padStart(2,'0')}</h2><div class="bayMeta">4 PALLET SLOT · 4 LEVEL RACK · ${selectedFace.arrow} 통로 ${String(selectedFace.aisle).padStart(2,'0')} 방향</div><div class="levelStack">${detail.join('')}</div><div class="rackStats"><div><small>층 사용량</small><b>${st.used.toLocaleString()}</b></div><div><small>빈 슬롯</small><b>${st.free.toLocaleString()}</b></div></div><div class="rackHint">배열은 실제 지게차 통로를 기준으로 분리되어 있습니다. A02/A03처럼 통로 사이의 두 렉은 등을 맞대고 서로 반대 통로를 바라봅니다.</div></aside></div></section></div>`;bind();}
   function bind(){host.querySelector('#rackClose').onclick=close;host.querySelectorAll('[data-floor]').forEach(b=>b.onclick=()=>{state.floor=b.dataset.floor;render()});host.querySelectorAll('.rackCell').forEach(b=>b.onclick=()=>{state.row=+b.dataset.r;state.col=+b.dataset.c;render()});const go=()=>{const q=host.querySelector('#rackSearch').value.trim().toUpperCase();const m=q.match(/(?:(1F|2F)-)?A?(\d{1,2})-(\d{1,2})(?:-L([1-4]))?/);if(!m)return;state.floor=m[1]||state.floor;state.row=Math.max(1,Math.min(50,+m[2]));state.col=Math.max(1,Math.min(50,+m[3]));render()};host.querySelector('#rackGo').onclick=go;host.querySelector('#rackSearch').onkeydown=e=>{if(e.key==='Enter')go()}}
-  function open(opts={}){seed();state.open=true;if(opts.floor)state.floor=opts.floor;if(opts.row)state.row=opts.row;if(opts.col)state.col=opts.col;if(document.pointerLockElement)document.exitPointerLock();host=document.createElement('div');host.id='rackViewerRoot';document.body.appendChild(host);render()}
+  function open(opts={}){seed();state.open=true;if(opts.floor)state.floor=opts.floor;if(opts.row)state.row=opts.row;if(opts.col)state.col=opts.col;if(document.pointerLockElement)document.exitPointerLock();if(host)host.remove();host=document.createElement('div');host.id='rackViewerRoot';document.body.appendChild(host);render()}
   function close(){state.open=false;host?.remove();host=null}
-  return {open,close,inventory,elevators};
+  return {open,close,inventory,elevators,ensureSeed:seed};
 })();
 window.RackViewer=RackViewer;
