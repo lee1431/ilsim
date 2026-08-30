@@ -1,0 +1,47 @@
+/* Readability overrides for logistics inspection UI */
+.queueHead {
+  font-size: 14px !important;
+  font-weight: 800;
+}
+.queue article > strong {
+  font-size: 13px !important;
+}
+.queue p {
+  font-size: 11px !important;
+  font-weight: 700;
+  line-height: 1.3;
+}
+.queue small {
+  font-size: 10px !important;
+  line-height: 1.25;
+}
+.queue em {
+  font-size: 10px !important;
+  font-weight: 700;
+}
+.jam {
+  font-size: 10px !important;
+  font-weight: 700;
+}
+
+.trayTop {
+  font-size: 15px !important;
+  font-weight: 800;
+}
+.trayTop span {
+  font-size: 13px !important;
+}
+.tray > p {
+  font-size: 13px !important;
+  line-height: 1.5;
+}
+.labelList small {
+  font-size: 13px !important;
+}
+.labelList strong {
+  font-size: 24px !important;
+}
+.labelList span {
+  font-size: 12px !important;
+  line-height: 1.35;
+}
