@@ -6,7 +6,7 @@ if (!s.includes('rack-viewer.css')) {
   s = s.replace('</head>','<link rel="stylesheet" href="./ui-font-fix.css">\n<link rel="stylesheet" href="./rack-viewer.css">\n<link rel="stylesheet" href="./forklift-game.css">\n</head>');
 }
 if (!s.includes('rack-viewer.js')) {
-  s = s.replace('<script type="module">','<script src="./rack-viewer.js"></script>\n<script src="./forklift-game.js"></script>\n<script type="module">');
+  s = s.replace('<script type="module">','<script src="./rack-viewer.js"></script>\n<script src="./forklift-game-loader.js"></script>\n<script type="module">');
 }
 
 s = s.replace(
