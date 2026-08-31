@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f3f0e8">
+  <meta name="description" content="코딩을 처음 시작한 사람을 위한 쉬운 IT 단어장">
+  <title>일sim IT 단어장</title>
+  <style>
+    :root {
+      --paper: #f3f0e8;
+      --paper-deep: #e8e3d7;
+      --ink: #17202a;
+      --muted: #667085;
+      --line: #d6d0c4;
+      --blue: #1f57d6;
+      --blue-soft: #e8efff;
+      --orange: #f36f38;
+      --green: #198754;
+      --white: #fffefb;
+      --shadow: 0 12px 32px rgba(34, 39, 47, .08);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(rgba(31, 87, 214, .035) 1px, transparent 1px) 0 0 / 100% 28px,
+        var(--paper);
+      font-family: Pretendard, "Apple SD Gothic Neo", "Noto Sans KR", system-ui, sans-serif;
+      min-height: 100vh;
+    }
+
+    button, input { font: inherit; }
+    button { color: inherit; }
+
+    .shell { width: min(1160px, calc(100% - 32px)); margin: 0 auto; }
+
+    header {
+      padding: 30px 0 18px;
+      border-bottom: 1px solid rgba(23, 32, 42, .12);
+      background: rgba(243, 240, 232, .92);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .topline { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    .mark {
+      display: grid;
+      place-items: center;
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      color: #fff;
+      background: var(--blue);
+      box-shadow: 5px 5px 0 var(--orange);
+      font-weight: 900;
+      letter-spacing: -.08em;
+    }
+    .brand h1 { margin: 0; font-size: clamp(1.25rem, 3vw, 1.75rem); letter-spacing: -.045em; }
+    .brand p { margin: 3px 0 0; color: var(--muted); font-size: .88rem; }
+
+    .progress-box { min-width: 170px; text-align: right; }
+    .progress-label { display: flex; justify-content: flex-end; gap: 6px; font-size: .82rem; color: var(--muted); }
+    .progress-label strong { color: var(--blue); }
+    .progress-track { width: 170px; height: 7px; background: var(--paper-deep); border-radius: 99px; margin-top: 7px; overflow: hidden; }
+    .progress-fill { width: 0; height: 100%; background: linear-gradient(90deg, var(--blue), #5a83e8); border-radius: inherit; transition: width .25s ease; }
+
+    main { padding: 38px 0 80px; }
+    .intro { display: grid; grid-template-columns: 1.15fr .85fr; gap: 18px; margin-bottom: 22px; }
+    .intro-card, .flow-card {
+      border: 1px solid var(--line);
+      background: rgba(255, 254, 251, .86);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+    }
+    .intro-card { padding: clamp(24px, 5vw, 44px); position: relative; overflow: hidden; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 8px; color: var(--blue); font-weight: 800; font-size: .85rem; }
+    .eyebrow::before { content: ""; width: 22px; height: 3px; border-radius: 4px; background: var(--orange); }
+    .intro h2 { margin: 14px 0 12px; font-size: clamp(2rem, 6vw, 4rem); line-height: 1; letter-spacing: -.065em; }
+    .intro h2 span { color: var(--blue); }
+    .intro-card > p { margin: 0; max-width: 560px; color: var(--muted); line-height: 1.7; }
+    .scribble { position: absolute; right: 24px; bottom: 18px; font-family: ui-monospace, monospace; color: rgba(31, 87, 214, .12); font-size: clamp(2rem, 6vw, 4.5rem); font-weight: 900; transform: rotate(-6deg); user-select: none; }
+
+    .flow-card { padding: 24px; display: flex; flex-direction: column; justify-content: space-between; }
+    .flow-card h3 { margin: 0 0 18px; font-size: 1rem; }
+    .flow { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+    .flow span { padding: 8px 10px; background: var(--blue-soft); color: #1748b9; border: 1px solid #cadaff; border-radius: 10px; font-size: .82rem; font-weight: 750; }
+    .flow i { color: var(--orange); font-style: normal; font-weight: 900; }
+    .tip { margin-top: 22px; padding-top: 16px; border-top: 1px dashed var(--line); color: var(--muted); font-size: .84rem; line-height: 1.6; }
+
+    .toolbar {
+      position: sticky;
+      top: 96px;
+      z-index: 15;
+      padding: 14px;
+      margin-bottom: 22px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255, 254, 251, .92);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 8px 24px rgba(34, 39, 47, .07);
+    }
+    .search-row { display: flex; gap: 10px; }
+    .search-wrap { position: relative; flex: 1; }
+    .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
+    #search {
+      width: 100%; height: 48px; padding: 0 44px 0 44px;
+      border: 1px solid var(--line); border-radius: 13px; outline: none;
+      background: var(--white); color: var(--ink); transition: border-color .2s, box-shadow .2s;
+    }
+    #search:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(31, 87, 214, .12); }
+    .clear-search { position: absolute; right: 9px; top: 8px; width: 32px; height: 32px; border: 0; background: transparent; color: var(--muted); border-radius: 8px; cursor: pointer; display: none; }
+    .clear-search:hover { background: var(--paper-deep); color: var(--ink); }
+    .random-btn { min-width: 116px; height: 48px; padding: 0 16px; border: 0; border-radius: 13px; background: var(--ink); color: #fff; font-weight: 800; cursor: pointer; transition: transform .15s, background .15s; }
+    .random-btn:hover { background: var(--blue); transform: translateY(-1px); }
+    .filters { display: flex; gap: 8px; overflow-x: auto; padding-top: 11px; scrollbar-width: none; }
+    .filters::-webkit-scrollbar { display: none; }
+    .filter { white-space: nowrap; border: 1px solid var(--line); background: transparent; border-radius: 99px; padding: 8px 12px; font-size: .8rem; color: var(--muted); cursor: pointer; }
+    .filter[aria-pressed="true"] { border-color: var(--blue); background: var(--blue); color: #fff; font-weight: 800; }
+
+    .result-line { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 2px 14px; color: var(--muted); font-size: .88rem; }
+    .result-line strong { color: var(--ink); }
+    .reset-btn { border: 0; background: transparent; color: var(--muted); text-decoration: underline; cursor: pointer; }
+
+    .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+    .word-card {
+      position: relative;
+      min-height: 218px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: var(--white);
+      box-shadow: 0 5px 18px rgba(34, 39, 47, .045);
+      transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+      scroll-margin-top: 190px;
+    }
+    .word-card:hover { transform: translateY(-3px); border-color: #b7c5e8; box-shadow: var(--shadow); }
+    .word-card.learned { background: #f7fcf8; border-color: #add9bc; }
+    .word-card.flash { animation: flash 1.2s ease; }
+    @keyframes flash { 0%, 100% { box-shadow: 0 5px 18px rgba(34,39,47,.045); } 35% { box-shadow: 0 0 0 5px rgba(243,111,56,.27), 0 14px 35px rgba(34,39,47,.13); transform: translateY(-4px); } }
+    .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+    .category { display: inline-block; margin-bottom: 10px; color: var(--blue); font-size: .72rem; font-weight: 850; letter-spacing: .02em; }
+    .word-card h3 { margin: 0; font-size: 1.28rem; line-height: 1.15; letter-spacing: -.025em; }
+    .ko { display: block; margin-top: 5px; color: var(--muted); font-size: .78rem; font-weight: 500; }
+    .check-btn { flex: 0 0 auto; display: grid; place-items: center; width: 34px; height: 34px; border: 1px solid var(--line); border-radius: 11px; background: transparent; color: transparent; cursor: pointer; }
+    .check-btn:hover { border-color: var(--green); color: #9bc8aa; }
+    .learned .check-btn { border-color: var(--green); background: var(--green); color: #fff; }
+    .meaning { margin: 18px 0 12px; font-size: .98rem; font-weight: 720; line-height: 1.5; }
+    .example { margin: auto 0 0; padding: 11px 12px; border-radius: 11px; background: var(--paper); color: #59616d; font-size: .8rem; line-height: 1.5; }
+    .example::before { content: "예시  "; color: var(--orange); font-weight: 850; }
+
+    .empty { display: none; text-align: center; padding: 70px 20px; border: 1px dashed var(--line); border-radius: 20px; color: var(--muted); background: rgba(255,255,255,.45); }
+    .empty strong { display: block; color: var(--ink); font-size: 1.15rem; margin-bottom: 6px; }
+
+    footer { padding: 30px 0 42px; text-align: center; color: var(--muted); font-size: .8rem; border-top: 1px solid rgba(23,32,42,.1); }
+    footer strong { color: var(--blue); }
+
+    @media (max-width: 880px) {
+      .intro { grid-template-columns: 1fr; }
+      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .flow-card { min-height: 190px; }
+    }
+    @media (max-width: 580px) {
+      .shell { width: min(100% - 22px, 1160px); }
+      header { padding: 18px 0 13px; }
+      .brand p { display: none; }
+      .mark { width: 39px; height: 39px; border-radius: 11px; font-size: .87rem; }
+      .progress-box { min-width: 110px; }
+      .progress-track { width: 110px; }
+      main { padding-top: 18px; }
+      .intro-card, .flow-card { border-radius: 18px; }
+      .intro-card { padding: 25px 20px 48px; }
+      .intro h2 { font-size: 2.35rem; }
+      .flow-card { padding: 20px; min-height: 0; }
+      .toolbar { top: 71px; margin-left: -2px; margin-right: -2px; padding: 10px; border-radius: 15px; }
+      .random-btn { min-width: 50px; width: 50px; padding: 0; font-size: 0; }
+      .random-btn::after { content: "↻"; font-size: 1.35rem; }
+      .grid { grid-template-columns: 1fr; gap: 10px; }
+      .word-card { min-height: 0; padding: 18px; }
+      .meaning { margin-top: 14px; }
+      .result-line { margin-top: 4px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="shell topline">
+      <div class="brand">
+        <div class="mark" aria-hidden="true">일sim</div>
+        <div><h1>초보 IT 단어장</h1><p>개발자 말을 사람 말로 번역합니다</p></div>
+      </div>
+      <div class="progress-box" aria-label="학습 진행률">
+        <div class="progress-label"><span>내가 아는 단어</span><strong id="progressText">0 / 55</strong></div>
+        <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section class="intro" aria-labelledby="introTitle">
+      <div class="intro-card">
+        <span class="eyebrow">코딩 초보용 · LEVEL 1</span>
+        <h2 id="introTitle">몰라도 됩니다.<br><span>지금 찾으면 되니까.</span></h2>
+        <p>코드나 개발자 대화에서 자주 튀어나오는 말만 모았습니다. 어려운 정의 대신 “이 단어 나오면 대충 이 뜻”으로 보면 됩니다.</p>
+        <div class="scribble" aria-hidden="true">{ hello }</div>
+      </div>
+      <aside class="flow-card" aria-label="웹의 기본 흐름">
+        <div>
+          <h3>이 흐름 하나만 먼저 기억하기</h3>
+          <div class="flow"><span>사용자</span><i>→</i><span>Frontend</span><i>→</i><span>API</span><i>→</i><span>Backend</span><i>→</i><span>Database</span></div>
+        </div>
+        <p class="tip">단어를 이해했으면 카드 오른쪽의 체크를 누르세요. 이 기기에 학습 기록이 저장됩니다.</p>
+      </aside>
+    </section>
+
+    <section class="toolbar" aria-label="단어 검색과 분류">
+      <div class="search-row">
+        <div class="search-wrap">
+          <span class="search-icon" aria-hidden="true">⌕</span>
+          <input id="search" type="search" autocomplete="off" placeholder="단어 또는 설명 검색 (예: 서버, 저장, 오류)" aria-label="단어 검색">
+          <button class="clear-search" id="clearSearch" type="button" aria-label="검색어 지우기">×</button>
+        </div>
+        <button class="random-btn" id="randomBtn" type="button">랜덤 단어</button>
+      </div>
+      <div class="filters" id="filters" aria-label="분야별 필터"></div>
+    </section>
+
+    <div class="result-line"><span><strong id="resultCount">55</strong>개 단어를 보는 중</span><button class="reset-btn" id="resetProgress" type="button">학습 체크 초기화</button></div>
+    <section class="grid" id="wordGrid" aria-live="polite"></section>
+    <div class="empty" id="empty"><strong>찾는 단어가 없네요.</strong>다른 검색어를 입력하거나 전체 분류를 선택해 보세요.</div>
+  </main>
+
+  <footer><strong>일sim</strong> · 일을 이해하는 가장 쉬운 시뮬레이션</footer>
+
+  <script>
+    const words = [
+      {term:'Frontend', ko:'프론트엔드', cat:'웹 기초', meaning:'사람이 직접 보고 누르는 화면 부분', example:'홈페이지의 버튼, 메뉴, 화면'},
+      {term:'Backend', ko:'백엔드', cat:'웹 기초', meaning:'화면 뒤에서 요청을 처리하는 부분', example:'로그인 확인, 데이터 저장'},
+      {term:'Server', ko:'서버', cat:'웹 기초', meaning:'요청을 받아 처리해 주는 컴퓨터 또는 프로그램', example:'웹 서버, 게임 서버'},
+      {term:'Client', ko:'클라이언트', cat:'웹 기초', meaning:'서버에 무언가를 요청하는 쪽', example:'브라우저, 스마트폰 앱'},
+      {term:'API', ko:'에이피아이', cat:'웹 기초', meaning:'프로그램끼리 대화하는 약속된 창구', example:'프론트 → API → 서버'},
+      {term:'Database', ko:'데이터베이스 · DB', cat:'데이터', meaning:'데이터를 체계적으로 저장하고 찾는 곳', example:'회원 정보, 게시글, 주문 내역'},
+      {term:'JSON', ko:'제이슨', cat:'데이터', meaning:'데이터를 주고받을 때 자주 쓰는 글자 형식', example:'{"name":"철수","age":20}'},
+      {term:'HTML', ko:'에이치티엠엘', cat:'웹 기초', meaning:'웹페이지의 내용과 뼈대를 만드는 언어', example:'제목, 버튼, 입력창'},
+      {term:'CSS', ko:'씨에스에스', cat:'웹 기초', meaning:'웹페이지의 모양을 꾸미는 언어', example:'색상, 크기, 배치'},
+      {term:'JavaScript', ko:'자바스크립트 · JS', cat:'코드 기초', meaning:'웹페이지를 움직이고 반응하게 만드는 언어', example:'버튼 클릭, 화면 변경'},
+      {term:'Python', ko:'파이썬', cat:'코드 기초', meaning:'문법이 비교적 쉬운 범용 프로그래밍 언어', example:'서버, 자동화, AI'},
+      {term:'Framework', ko:'프레임워크', cat:'개발 도구', meaning:'개발에 필요한 구조와 규칙을 미리 만들어 둔 틀', example:'Flask, React, Django'},
+      {term:'Library', ko:'라이브러리', cat:'개발 도구', meaning:'필요한 기능만 가져다 쓰는 코드 부품', example:'Three.js, NumPy'},
+      {term:'Variable', ko:'변수', cat:'코드 기초', meaning:'값을 담아 두는 이름표 붙은 상자', example:'age = 20'},
+      {term:'Function', ko:'함수', cat:'코드 기초', meaning:'특정 작업을 하나로 묶어 이름 붙인 코드', example:'login()'},
+      {term:'Array', ko:'배열', cat:'데이터', meaning:'여러 값을 순서대로 담은 묶음', example:'[사과, 배, 포도]'},
+      {term:'Object', ko:'객체', cat:'데이터', meaning:'서로 관련된 정보를 한 덩어리로 묶은 것', example:'{이름: 철수, 나이: 20}'},
+      {term:'Loop', ko:'반복문', cat:'코드 기초', meaning:'같거나 비슷한 작업을 여러 번 실행하는 코드', example:'상품 100개를 차례로 검사'},
+      {term:'Condition', ko:'조건문', cat:'코드 기초', meaning:'조건에 따라 실행할 행동을 나누는 코드', example:'비밀번호가 맞으면 로그인'},
+      {term:'Bug', ko:'버그', cat:'오류 해결', meaning:'프로그램이 의도와 다르게 움직이는 문제', example:'버튼을 눌렀는데 아무 일도 없음'},
+      {term:'Debugging', ko:'디버깅', cat:'오류 해결', meaning:'버그의 원인을 찾아 고치는 과정', example:'로그를 찍어 문제 지점 찾기'},
+      {term:'Error', ko:'에러', cat:'오류 해결', meaning:'실행 도중 발생한 오류나 실패', example:'파일 없음, 문법 오류'},
+      {term:'Log', ko:'로그', cat:'오류 해결', meaning:'프로그램이 무엇을 했는지 남긴 기록', example:'Login success'},
+      {term:'Terminal', ko:'터미널', cat:'개발 도구', meaning:'글자 명령어로 컴퓨터를 조작하는 화면', example:'npm install'},
+      {term:'CLI', ko:'명령줄 인터페이스', cat:'개발 도구', meaning:'마우스 대신 터미널 명령어로 쓰는 방식', example:'git clone ...'},
+      {term:'Git', ko:'깃', cat:'Git · 배포', meaning:'코드의 변경 이력을 관리하는 도구', example:'수정 전 버전으로 되돌리기'},
+      {term:'GitHub', ko:'깃허브', cat:'Git · 배포', meaning:'Git 프로젝트를 인터넷에 저장하고 공유하는 서비스', example:'온라인 코드 저장소'},
+      {term:'Repository', ko:'저장소 · Repo', cat:'Git · 배포', meaning:'프로젝트 코드와 기록이 모여 있는 공간', example:'GitHub의 프로젝트 하나'},
+      {term:'Commit', ko:'커밋', cat:'Git · 배포', meaning:'현재 변경 사항을 하나의 기록으로 저장하는 것', example:'로그인 기능 추가'},
+      {term:'Push', ko:'푸시', cat:'Git · 배포', meaning:'내 컴퓨터의 Git 기록을 원격 저장소에 올리는 것', example:'내 컴퓨터 → GitHub'},
+      {term:'Pull', ko:'풀', cat:'Git · 배포', meaning:'원격 저장소의 변경 사항을 내 컴퓨터로 가져오는 것', example:'GitHub → 내 컴퓨터'},
+      {term:'Clone', ko:'클론', cat:'Git · 배포', meaning:'원격 저장소 전체를 처음 복사해 오는 것', example:'GitHub 프로젝트 내려받기'},
+      {term:'Branch', ko:'브랜치', cat:'Git · 배포', meaning:'원본과 나란히 별도 작업을 하는 코드 갈래', example:'main, test'},
+      {term:'Deploy', ko:'배포', cat:'Git · 배포', meaning:'만든 프로그램을 다른 사람이 실제로 쓰게 공개하는 것', example:'홈페이지를 인터넷에 올리기'},
+      {term:'Domain', ko:'도메인', cat:'네트워크', meaning:'사람이 기억하기 쉽게 만든 인터넷 주소 이름', example:'example.com'},
+      {term:'IP Address', ko:'아이피 주소', cat:'네트워크', meaning:'네트워크에서 컴퓨터를 찾는 숫자 주소', example:'192.168.0.10'},
+      {term:'Port', ko:'포트', cat:'네트워크', meaning:'한 컴퓨터 안에서 실행 중인 프로그램을 구분하는 번호', example:':80, :443, :5000'},
+      {term:'HTTP', ko:'에이치티티피', cat:'네트워크', meaning:'웹에서 데이터를 주고받기 위한 통신 규칙', example:'브라우저 ↔ 서버'},
+      {term:'HTTPS', ko:'에이치티티피에스', cat:'네트워크', meaning:'주고받는 내용을 암호화한 안전한 HTTP', example:'주소창에 자물쇠가 붙은 사이트'},
+      {term:'Request', ko:'요청', cat:'웹 통신', meaning:'클라이언트가 서버에 원하는 일을 전달하는 것', example:'게시글을 보내 줘'},
+      {term:'Response', ko:'응답', cat:'웹 통신', meaning:'서버가 요청을 처리하고 결과를 돌려주는 것', example:'여기 게시글이 있어'},
+      {term:'GET', ko:'겟', cat:'웹 통신', meaning:'서버에 데이터를 달라고 하는 대표 요청 방식', example:'게시글 조회'},
+      {term:'POST', ko:'포스트', cat:'웹 통신', meaning:'서버로 데이터를 보내거나 새로 만드는 요청 방식', example:'회원 가입'},
+      {term:'Status Code', ko:'상태 코드', cat:'웹 통신', meaning:'서버의 처리 결과를 짧은 숫자로 표시한 것', example:'200, 404, 500'},
+      {term:'404', ko:'낫 파운드', cat:'오류 해결', meaning:'요청한 페이지나 파일을 찾지 못했다는 뜻', example:'주소가 틀렸거나 페이지가 삭제됨'},
+      {term:'500', ko:'서버 오류', cat:'오류 해결', meaning:'서버 내부에서 문제가 생겼다는 뜻', example:'백엔드 코드 오류'},
+      {term:'localhost', ko:'로컬호스트', cat:'네트워크', meaning:'지금 내가 사용 중인 바로 그 컴퓨터', example:'localhost:5000'},
+      {term:'npm', ko:'엔피엠', cat:'개발 도구', meaning:'JavaScript용 코드 부품을 설치하고 관리하는 도구', example:'npm install'},
+      {term:'Package', ko:'패키지', cat:'개발 도구', meaning:'다른 사람이 만들어 배포한 코드 묶음', example:'npm 패키지'},
+      {term:'Dependency', ko:'의존성', cat:'개발 도구', meaning:'내 프로그램이 작동하려면 필요한 외부 코드 부품', example:'Flask, React'},
+      {term:'Open Source', ko:'오픈 소스', cat:'개발 문화', meaning:'누구나 볼 수 있게 소스 코드가 공개된 소프트웨어', example:'Linux'},
+      {term:'Refactoring', ko:'리팩터링', cat:'개발 문화', meaning:'기능은 그대로 두고 코드를 더 읽기 좋게 정리하는 작업', example:'중복 코드 제거'},
+      {term:'Hard Coding', ko:'하드 코딩', cat:'개발 문화', meaning:'바뀔 수 있는 값을 코드 안에 직접 박아 두는 것', example:'password = "1234"'},
+      {term:'CRUD', ko:'크루드', cat:'데이터', meaning:'데이터의 생성·조회·수정·삭제 네 가지 기본 작업', example:'Create / Read / Update / Delete'},
+      {term:'Responsive', ko:'반응형', cat:'웹 기초', meaning:'화면 크기에 맞춰 웹페이지 배치가 자동으로 바뀌는 것', example:'폰에서는 1열, PC에서는 3열'},
+    ];
+
+    const storageKey = 'ilsim-it-dictionary-learned-v1';
+    const grid = document.querySelector('#wordGrid');
+    const search = document.querySelector('#search');
+    const clearSearch = document.querySelector('#clearSearch');
+    const filters = document.querySelector('#filters');
+    const resultCount = document.querySelector('#resultCount');
+    const empty = document.querySelector('#empty');
+    const progressText = document.querySelector('#progressText');
+    const progressFill = document.querySelector('#progressFill');
+    let activeCategory = '전체';
+    let learned = new Set(JSON.parse(localStorage.getItem(storageKey) || '[]'));
+
+    const normalize = value => value.toLowerCase().replace(/\s+/g, '');
+    const categories = ['전체', ...new Set(words.map(word => word.cat))];
+
+    function saveLearned() {
+      localStorage.setItem(storageKey, JSON.stringify([...learned]));
+      progressText.textContent = `${learned.size} / ${words.length}`;
+      progressFill.style.width = `${(learned.size / words.length) * 100}%`;
+    }
+
+    function renderFilters() {
+      filters.innerHTML = categories.map(cat => {
+        const count = cat === '전체' ? words.length : words.filter(word => word.cat === cat).length;
+        return `<button class="filter" type="button" data-category="${cat}" aria-pressed="${cat === activeCategory}">${cat} ${count}</button>`;
+      }).join('');
+    }
+
+    function matchingWords() {
+      const query = normalize(search.value.trim());
+      return words.filter(word => {
+        const inCategory = activeCategory === '전체' || word.cat === activeCategory;
+        const haystack = normalize(`${word.term} ${word.ko} ${word.cat} ${word.meaning} ${word.example}`);
+        return inCategory && (!query || haystack.includes(query));
+      });
+    }
+
+    function renderWords() {
+      const matches = matchingWords();
+      resultCount.textContent = matches.length;
+      grid.innerHTML = matches.map(word => `
+        <article class="word-card ${learned.has(word.term) ? 'learned' : ''}" data-term="${word.term}">
+          <div class="card-top">
+            <div><span class="category">${word.cat}</span><h3>${word.term}<span class="ko">${word.ko}</span></h3></div>
+            <button class="check-btn" type="button" aria-label="${word.term} 학습 완료" aria-pressed="${learned.has(word.term)}">✓</button>
+          </div>
+          <p class="meaning">${word.meaning}</p>
+          <p class="example">${word.example}</p>
+        </article>`).join('');
+      empty.style.display = matches.length ? 'none' : 'block';
+      clearSearch.style.display = search.value ? 'block' : 'none';
+      saveLearned();
+    }
+
+    search.addEventListener('input', renderWords);
+    clearSearch.addEventListener('click', () => { search.value = ''; search.focus(); renderWords(); });
+    filters.addEventListener('click', event => {
+      const button = event.target.closest('.filter');
+      if (!button) return;
+      activeCategory = button.dataset.category;
+      renderFilters();
+      renderWords();
+    });
+    grid.addEventListener('click', event => {
+      const button = event.target.closest('.check-btn');
+      if (!button) return;
+      const card = button.closest('.word-card');
+      const term = card.dataset.term;
+      learned.has(term) ? learned.delete(term) : learned.add(term);
+      card.classList.toggle('learned', learned.has(term));
+      button.setAttribute('aria-pressed', learned.has(term));
+      saveLearned();
+    });
+    document.querySelector('#randomBtn').addEventListener('click', () => {
+      const pool = matchingWords();
+      if (!pool.length) return;
+      const word = pool[Math.floor(Math.random() * pool.length)];
+      const card = [...grid.querySelectorAll('.word-card')].find(item => item.dataset.term === word.term);
+      card.scrollIntoView({behavior:'smooth', block:'center'});
+      card.classList.remove('flash');
+      requestAnimationFrame(() => card.classList.add('flash'));
+    });
+    document.querySelector('#resetProgress').addEventListener('click', () => {
+      if (!learned.size || !confirm('학습 체크를 모두 지울까요?')) return;
+      learned.clear();
+      renderWords();
+    });
+
+    renderFilters();
+    renderWords();
+  </script>
+</body>
+</html>
